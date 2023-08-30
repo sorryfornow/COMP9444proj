@@ -18,7 +18,7 @@ from data_assign import data_assign
 train_path = 'dataset/train'
 test_path = 'dataset/test'
 image_path = "dataset/CXR_png"
-mask_path = "dataset/mask"
+mask_path = "dataset/mask"  # segmentation mask
 
 train_mask_list, test_mask_list = data_assign(train_path, test_path, image_path, mask_path, rate=0.8)
 
@@ -45,6 +45,7 @@ best_loss = float('inf')
 def save_checkpoint():
     torch.save(model.state_dict(), model_save_path)
     print("Checkpoint saved!")
+
 
 # Training loop
 for epoch in range(epochs):

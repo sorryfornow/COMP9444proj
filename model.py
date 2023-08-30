@@ -73,6 +73,9 @@ class UNet(nn.Module):
         out = self.out_conv(dec4)
         # out = nn.AdaptiveAvgPool2d(1)(out)
         out = out.view(out.size(0), -1)  # Flatten the tensor
+        # one-zero classification
+        # out = nn.Sigmoid()(out)
+        # out = torch.where(out > 0.5, torch.tensor([1.]).cuda(), torch.tensor([0.]).cuda())
         return self.out_activation(out)
         ###########
 
