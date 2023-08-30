@@ -2,7 +2,6 @@ import os
 import shutil
 import random
 
-
 def data_assign(train_path, test_path, image_path, mask_path, rate=0.8):
     # train_path = 'dataset/train'
     # test_path = 'dataset/test'

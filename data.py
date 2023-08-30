@@ -161,9 +161,25 @@ def evaluateRes(test_path, results):
     test_image_names = glob.glob(os.path.join(image_folder, "*.png"))
     num_image = len(test_image_names)
     correct = 0
+    # [array([[0.5238405]], dtype=float32), array([[0.5245774]], dtype=float32), array([[0.52511436]], dtype=float32),]
     for i in range(num_image):
         img = io.imread(test_image_names[i], as_gray=True)
-        label = img[-5]
-        if label == results[i]:
+        label = test_image_names[i][-5]
+        label = int(label)
+        # sigmoid results
+        t = 0
+        if results[i][0][0].any() > 0.5:
+            t = 1
+        if label == t:
             correct += 1
-    return correct/num_image
+    return correct/(num_image+1)
+
+def test_generator2(test_path, num_image=30, target_size=(256,256)):
+    image_folder = os.path.join(test_path, "label")
+    test_image_names = glob.glob(os.path.join(image_folder, "*.png"))
+    num_image = min(num_image, len(test_image_names))
+    for i in range(num_image):
+        img = io.imread(test_image_names[i], as_gray=True)
+        img = transform.resize(img, target_size)
+        img = torch.from_numpy(img).float().unsqueeze(0).unsqueeze(0)
+        yield img

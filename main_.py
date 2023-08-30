@@ -28,9 +28,9 @@ print("number of testing data", len(test_mask_list))
 # Parameters
 data_gen_args = dict(horizontal_flip=0.5)  # Only horizontal_flip was implemented in train_generator
 model_save_path = 'unet_membrane.pth'
-batch_size = 4
-epochs = 3
-steps_per_epoch = 200
+batch_size = 5
+epochs = 1
+steps_per_epoch = 100
 
 # Device configuration
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -62,17 +62,19 @@ for epoch in range(epochs):
 
         optimizer.zero_grad()
         # forward
-        outputs = model.forward(images)
+        # outputs = model.forward(images)
+        outputs = model(images)
         # print("outputs", outputs.shape)
         loss = criterion(outputs, Labels)
         loss.backward()
         optimizer.step()
 
         total_loss += loss.item()
-        print("the average loss of", i, ":", total_loss/(i+1))
+        # print("the average loss of", i, ":", total_loss/(i+1))
 
         if (i + 1) % steps_per_epoch == 0:
             average_loss = total_loss / steps_per_epoch
+            print("the average loss of", i, ":", average_loss)
             print(f"Epoch [{epoch + 1}/{epochs}], Step [{i + 1}/{steps_per_epoch}], Loss: {average_loss:.4f}")
 
             # Save model if loss improves
@@ -82,17 +84,9 @@ for epoch in range(epochs):
 
             total_loss = 0.0
 
-# Testing
-model.eval()
-test_loader = test_generator(test_path, num_image=57)
-results = []
-with torch.no_grad():
-    for images in test_loader:
-        images = images.to(device)
-        outputs = model(images)
-        results.append(outputs.cpu().numpy())
+# Save model
+torch.save(model.state_dict(), model_save_path)
+model.load_state_dict(torch.load(model_save_path))
 
-# Save results
-# save_result(test_path, results)
-evaluateRes(test_path, results)
+
 

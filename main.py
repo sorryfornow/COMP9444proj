@@ -78,15 +78,21 @@ for epoch in range(epochs):
 
             total_loss = 0.0
 
+# Save model
+torch.save(model.state_dict(), model_save_path)
+model.load_state_dict(torch.load(model_save_path))
+
 # Testing
 model.eval()
 test_loader = test_generator(test_path, num_image=57)
 results = []
 with torch.no_grad():
-    for images in test_loader:
-        images = images.to(device)
+    for i in range(len(test_mask_list)):
+        images = next(test_loader).to(device)
         outputs = model(images)
         results.append(outputs.cpu().numpy())
+        print("test", i, outputs.shape)
+
 
 # Save results
 save_result(test_path, results)

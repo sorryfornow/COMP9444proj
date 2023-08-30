@@ -71,7 +71,7 @@ class UNet(nn.Module):
         ###########
         # for main_.py binary classification
         out = self.out_conv(dec4)
-        out = nn.AdaptiveAvgPool2d(1)(out)
+        # out = nn.AdaptiveAvgPool2d(1)(out)
         out = out.view(out.size(0), -1)  # Flatten the tensor
         return self.out_activation(out)
         ###########
